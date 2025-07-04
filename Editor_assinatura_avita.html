@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <title>Editor de Assinatura Avita</title>
+  <link href="https://fonts.googleapis.com/css2?family=Century+Gothic&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Century Gothic', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #e6f8f7;
+      color: #014249;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 216, 190, 0.2);
+    }
+
+    .logo-top {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 200px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00D8BE;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    label {
+      width: 120px;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #00D8BE;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    .checkbox-label {
+      margin-left: 10px;
+      font-size: 13px;
+      color: #014249;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #00D8BE;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00bfa4;
+    }
+
+    .assinatura-container {
+      margin-top: 30px;
+      padding: 20px;
+      border: 1px dashed #00D8BE;
+      background-color: #f9fefd;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .tema-selector {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .tema-selector label {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <img src="https://avitaseg.com.br/wp-content/uploads/2025/01/logotipo.png" alt="Logotipo Avita" class="logo-top">
+    <h2>Editor de Assinatura Avita</h2>
+
+    <div class="tema-selector">
+      <label><input type="radio" name="tema" value="white" checked> Tema White</label>
+      <label><input type="radio" name="tema" value="dark"> Tema Dark</label>
+    </div>
+
+    <div id="editor">
+      <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input id="nome" type="text" value="Nome Sobrenome">
+        <label class="checkbox-label"><input type="checkbox" id="mostrar-nome" checked> Mostrar</label>
+      </div>
+      <div class="form-group">
+        <label for="telefone">Telefone:</label>
+        <input id="telefone" type="text" value="(00) 0000.0000">
+        <label class="checkbox-label"><input type="checkbox" id="mostrar-telefone" checked> Mostrar</label>
+      </div>
+      <div class="form-group">
+        <label for="celular">Celular:</label>
+        <input id="celular" type="text" value="(00) 0000.0000">
+        <label class="checkbox-label"><input type="checkbox" id="mostrar-celular" checked> Mostrar</label>
+      </div>
+      <div class="form-group">
+        <label for="email">E-mail:</label>
+        <input id="email" type="text" value="seuemail@avitaseg.com.br">
+        <label class="checkbox-label"><input type="checkbox" id="mostrar-email" checked> Mostrar</label>
+      </div>
+      <div style="text-align: center;">
+        <button onclick="gerarAssinatura()">Gerar Assinatura</button>
+      </div>
+    </div>
+
+    <div id="assinatura" class="hidden assinatura-container"></div>
+    <div style="text-align: center;">
+      <button id="editarBtn" class="hidden" onclick="editarNovamente()">Editar Novamente</button>
+    </div>
+  </div>
+
+  <script>
+    function gerarAssinatura() {
+      const nome = document.getElementById("nome").value;
+      const telefone = document.getElementById("telefone").value;
+      const celular = document.getElementById("celular").value;
+      const email = document.getElementById("email").value;
+
+      const mostrarNome = document.getElementById("mostrar-nome").checked;
+      const mostrarTelefone = document.getElementById("mostrar-telefone").checked;
+      const mostrarCelular = document.getElementById("mostrar-celular").checked;
+      const mostrarEmail = document.getElementById("mostrar-email").checked;
+
+      const tema = document.querySelector('input[name="tema"]:checked').value;
+
+      const corTexto = tema === 'dark' ? '#ffffff' : '#1b1f26';
+      const corFundo = tema === 'dark' ? '#014249' : '#ffffff';
+      const logo = tema === 'dark' ? 'logotipo-1.png' : 'logotipo.png';
+      const icones = tema === 'dark' ? ['icone_telefone-1.png','icone_celular-1.png','icone_email-1.png','icone_site-1.png'] : ['icone_telefone.png','icone_celular.png','icone_email.png','icone_site.png'];
+      const simbolo = tema === 'dark' ? 'simbolo.png' : 'simbolo_1.png';
+
+      let html = `<table width="450" cellspacing="0" cellpadding="0" style="background:${corFundo};">
+        <tr height="25">
+          <td rowspan="7" width="165">
+            <img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${logo}" alt="Logotipo Avita" width="162" style="margin-left: 20px;">
+          </td>
+          <td rowspan="7">
+            <img src="https://avitaseg.com.br/wp-content/uploads/2025/01/grafismo-1.png" alt="" width="70" style="margin-right: 20px;">
+          </td>`;
+
+      html += mostrarNome ? `<td colspan="3" height="40"><span style="font-size: 16px; font-family: Century Gothic; color: #00D8BE; font-weight: 600; margin-left: 5px;">${nome}</span></td>` : '<td colspan="3" height="40"></td>';
+      html += '</tr>';
+
+      if (mostrarTelefone) html += `<tr height="25"><td align="center" width="20"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${icones[0]}" width="12"></td><td colspan="2"><span style="font-size: 12px; font-family: Century Gothic; color: ${corTexto};">${telefone}</span></td></tr>`;
+      if (mostrarCelular) html += `<tr height="25"><td align="center"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${icones[1]}" width="10"></td><td colspan="2"><span style="font-size: 12px; font-family: Century Gothic; color: ${corTexto};">${celular}</span></td></tr>`;
+      if (mostrarEmail) html += `<tr height="25"><td align="center"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${icones[2]}" width="12"></td><td colspan="2"><a href="mailto:${email}" style="font-size: 12px; font-family: Century Gothic; color: ${corTexto}; text-decoration: none;">${email}</a></td></tr>`;
+
+      html += `<tr height="25"><td align="center"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${icones[3]}" width="12" style="margin: 5px 5px 0 5px"></td><td><a href="https://www.avitaseg.com.br/" target="_blank" style="font-size: 12px; font-family: Century Gothic; color: ${corTexto}; text-decoration: none;">avitaseg.com.br</a></td></tr>`;
+
+      html += `<tr><td colspan="2"><a href="https://www.linkedin.com/company/avita-tecnologia-em-seguros/?originalSubdomain=br" target="_blank"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/botao-linkedin.png"></a><a href="https://www.youtube.com/channel/UC_hmFcsiQ5clyHXAKNhNW1g" target="_blank"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/botao-youtube.png"></a></td><td colspan="2"><img src="https://avitaseg.com.br/wp-content/uploads/2025/01/${simbolo}" width="48" height="41" align="right" style="margin:0 10px 10px 0"></td></tr>`;
+
+      html += `</table>`;
+
+      document.getElementById("assinatura").innerHTML = html;
+      document.getElementById("editor").classList.add("hidden");
+      document.getElementById("assinatura").classList.remove("hidden");
+      document.getElementById("editarBtn").classList.remove("hidden");
+    }
+
+    function editarNovamente() {
+      document.getElementById("assinatura").classList.add("hidden");
+      document.getElementById("editor").classList.remove("hidden");
+      document.getElementById("editarBtn").classList.add("hidden");
+    }
+  </script>
+
+</body>
+</html>

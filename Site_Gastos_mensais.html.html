@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Gastos</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --primary:#9aa60b;--primary-dark:#7d8608;--bg:#f7f7f7;
+      --available:#78e9ee;--radius:.5rem;
+    }
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,sans-serif;background:var(--bg);display:flex;justify-content:center;align-items:flex-start;min-height:100vh;padding:2rem}
+    .container{max-width:960px;width:100%;background:#fff;border:4px solid #7b62ff;border-radius:var(--radius);box-shadow:0 6px 20px rgba(0,0,0,.05);display:flex;flex-wrap:wrap;gap:2rem 3rem;padding:2rem}
+    .btn{display:flex;align-items:center;gap:.6rem;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:.55rem 1.4rem .55rem .9rem;font-size:.9rem;cursor:pointer;transition:background .25s;box-shadow:0 3px 4px rgba(0,0,0,.1)}
+    .btn:hover{background:var(--primary-dark)}
+    .icon-circle{width:28px;height:28px;border:3px solid var(--primary);background:#d7e2ff;border-radius:50%;display:flex;justify-content:center;align-items:center;font-weight:700;font-size:.9rem;color:var(--primary)}
+    .controls{display:flex;flex-direction:column;gap:1.1rem}
+    canvas{max-width:420px;max-height:420px}
+    .salary-btn-wrapper{width:100%;display:flex;justify-content:flex-end;align-self:flex-end;margin-top:auto}
+    @media(max-width:640px){.container{flex-direction:column;align-items:center}.salary-btn-wrapper{justify-content:center}}
+    dialog{border:none;border-radius:var(--radius);padding:1.8rem 2rem;max-width:340px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    dialog::backdrop{background:rgba(0,0,0,.25)}
+    dialog h2{margin:0 0 1rem;font-size:1.25rem}
+    dialog label{display:flex;flex-direction:column;gap:.25rem;font-size:.9rem;margin-bottom:.9rem}
+    dialog input{padding:.45rem .6rem;border:1px solid #ccc;border-radius:.35rem;font-size:.9rem}
+    .modal-actions{display:flex;justify-content:flex-end;gap:.8rem;margin-top:1rem}
+    .btn-secondary{background:#e1e1e1;color:#333}.btn-secondary:hover{background:#cfcfcf}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="controls">
+      <button class="btn" id="addBtn"><span class="icon-circle">+</span>Novo gasto</button>
+      <button class="btn" id="removeBtn"><span class="icon-circle">-</span>Excluir gasto</button>
+    </div>
+    <canvas id="gastosChart"></canvas>
+    <div class="salary-btn-wrapper">
+      <button class="btn" id="editSalaryBtn"><span class="icon-circle">R$</span>Editar salário</button>
+    </div>
+  </div>
+
+  <dialog id="modalNovoGasto">
+    <h2>Novo gasto</h2>
+    <label>Nome <input type="text" id="gastoNome"></label>
+    <label>Valor <input type="number" id="gastoValor"></label>
+    <label>Data <input type="date" id="gastoData"></label>
+    <div class="modal-actions">
+      <button class="btn" id="saveGasto">Salvar</button>
+      <button class="btn btn-secondary" id="cancelNovoGasto">Cancelar</button>
+    </div>
+  </dialog>
+
+  <dialog id="modalSalario">
+    <h2>Editar salário</h2>
+    <label>Salário <input type="number" id="salarioValor"></label>
+    <div class="modal-actions">
+      <button class="btn" id="saveSalario">Salvar</button>
+      <button class="btn btn-secondary" id="cancelSalario">Cancelar</button>
+    </div>
+  </dialog>
+
+  <dialog id="modalExcluir">
+    <h2>Excluir gastos</h2>
+    <button class="btn" id="excluirTodos">Excluir todos os gastos</button>
+    <div id="listaGastos"></div>
+    <button class="btn btn-secondary" id="voltarExcluir">Voltar</button>
+  </dialog>
+
+  <script>
+    let SALARIO_TOTAL = 4000;
+    const nomes = [], valores = [], datas = [], cores = [];
+    const ctx = document.getElementById("gastosChart").getContext("2d");
+    const chart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: ["Disponível"],
+        datasets: [{
+          data: [SALARIO_TOTAL],
+          backgroundColor: ["#78e9ee"],
+        }]
+      },
+      options: {
+        responsive: true,
+        cutout: "60%",
+        plugins: {
+          legend: { position: "left" }
+        }
+      }
+    });
+
+    const atualizarGrafico = () => {
+      const totalGastos = valores.reduce((a, b) => a + b, 0);
+      const disponivel = SALARIO_TOTAL - totalGastos;
+      chart.data.labels = ["Disponível", ...nomes];
+      chart.data.datasets[0].data = [disponivel, ...valores];
+      chart.data.datasets[0].backgroundColor = ["#78e9ee", ...cores];
+      chart.update();
+    };
+
+    const corPastel = () => `hsl(${Math.random()*360}, 70%, 80%)`;
+
+    document.getElementById("addBtn").onclick = () => modalNovoGasto.showModal();
+    document.getElementById("cancelNovoGasto").onclick = () => modalNovoGasto.close();
+    document.getElementById("saveGasto").onclick = () => {
+      const nome = gastoNome.value.trim();
+      const valor = parseFloat(gastoValor.value);
+      const data = gastoData.value;
+      if (!nome || !valor || !data) return alert("Preencha todos os campos.");
+      nomes.push(nome);
+      valores.push(valor);
+      datas.push(data);
+      cores.push(corPastel());
+      atualizarGrafico();
+      modalNovoGasto.close();
+      gastoNome.value = "";
+      gastoValor.value = "";
+      gastoData.value = "";
+    };
+
+    document.getElementById("editSalaryBtn").onclick = () => {
+      salarioValor.value = SALARIO_TOTAL;
+      modalSalario.showModal();
+    };
+    document.getElementById("cancelSalario").onclick = () => modalSalario.close();
+    document.getElementById("saveSalario").onclick = () => {
+      const novo = parseFloat(salarioValor.value);
+      if (isNaN(novo) || novo <= 0) return alert("Valor inválido");
+      SALARIO_TOTAL = novo;
+      atualizarGrafico();
+      modalSalario.close();
+    };
+
+    document.getElementById("removeBtn").onclick = () => {
+      if (nomes.length === 0) return alert("Nenhum gasto cadastrado");
+      renderizarLista();
+      modalExcluir.showModal();
+    };
+
+    document.getElementById("voltarExcluir").onclick = () => modalExcluir.close();
+    document.getElementById("excluirTodos").onclick = () => {
+      if (confirm("Deseja realmente excluir todos os gastos?")) {
+        nomes.length = valores.length = datas.length = cores.length = 0;
+        atualizarGrafico();
+        modalExcluir.close();
+      }
+    };
+
+    function renderizarLista() {
+      listaGastos.innerHTML = "";
+      nomes.forEach((n, i) => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-secondary";
+        btn.textContent = `Excluir: ${n} - R$ ${valores[i]}`;
+        btn.onclick = () => {
+          nomes.splice(i,1);
+          valores.splice(i,1);
+          datas.splice(i,1);
+          cores.splice(i,1);
+          atualizarGrafico();
+          renderizarLista();
+        };
+        listaGastos.appendChild(btn);
+      });
+    }
+  </script>
+</body>
+</html>
