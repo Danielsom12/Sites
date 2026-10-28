@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Meu Amor 💕</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;600;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     TELA DE INTRO — ENVELOPE
+═══════════════════════════════════════ -->
+<div id="intro-overlay" class="intro-overlay">
+
+    <!-- Corações flutuantes de fundo -->
+    <div class="hearts-container" id="heartsContainer"></div>
+
+    <div class="intro-scene">
+        <p class="intro-title">Você tem uma cartinha especial... 💌</p>
+
+        <div class="envelope-wrap" id="envelopeWrap" onclick="abrirCartinha()">
+
+            <!-- O envelope -->
+            <div class="envelope" id="envelope">
+
+                <!-- Carta (aparece ao abrir) -->
+                <div class="letter" id="letter">
+                    <div class="letter-content">
+                        <p class="letter-saudacao">Minha Manoela,</p>
+                        <p class="letter-texto">
+                            Cada dia ao seu lado é um presente que eu nunca esperava merecer.
+                            Você ilumina tudo só de sorrir... 💕
+                        </p>
+                        <button class="btn-entrar" id="btnEntrar" onclick="entrarNoSite(event)">
+                            Ver o site ✨
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Aba superior do envelope (abre em 3D) -->
+                <div class="env-aba" id="envAba"></div>
+
+                <!-- Corpo do envelope -->
+                <div class="env-corpo">
+                    <div class="env-dobra-esq"></div>
+                    <div class="env-dobra-dir"></div>
+                    <div class="env-lacre">💌</div>
+                </div>
+
+            </div><!-- /envelope -->
+
+            <p class="dica-clique" id="dicaClique">✨ Clique para abrir ✨</p>
+        </div><!-- /envelope-wrap -->
+    </div><!-- /intro-scene -->
+
+</div><!-- /intro-overlay -->
+
+
+<!-- ═══════════════════════════════════════
+     SITE PRINCIPAL
+═══════════════════════════════════════ -->
+<div id="site-principal" class="site-principal oculto">
+
+    <!-- Corações de fundo sutis -->
+    <div class="coracoes-fundo" id="coracoesFundo"></div>
+
+    <div class="container">
+
+        <header class="revelar">
+            <h1>Para o grande amor da minha vida</h1>
+            <div class="coracao-icone">❤️</div>
+        </header>
+
+        <section class="fotos revelar">
+            <div class="foto-card">
+                <img src="IMG_0415.jpg" alt="Momento Especial">
+                <p>Te amo desde o primeiro momento!</p>
+            </div>
+            <div class="foto-card">
+                <img src="foto2.jpg" alt="Melhor abraço">
+                <p>Melhor lugar do mundo!</p>
+            </div>
+            <div class="foto-card">
+                <video autoplay muted loop playsinline>
+                    <source src="video1.mp4" type="video/mp4">
+                </video>
+                <p>A Stitch mais linda! 😍</p>
+            </div>
+        </section>
+
+        <section class="texto-romantico revelar">
+            <h2>Por que eu te amo?</h2>
+            <p>
+                Criei este pequeno site para te dizer o quanto você é especial.
+                Sua risada é minha trilha sonora favorita e seu abraço é o meu lugar seguro no mundo.
+            </p>
+            <p>
+                Obrigado por ser minha parceira, minha melhor amiga e o meu amor.
+            </p>
+        </section>
+
+        <div class="botao-area revelar">
+            <button onclick="revelarSurpresa()">Clique aqui para uma promessa 💌</button>
+            <div id="surpresa" class="surpresa-oculta">
+                <p>Prometo te amar e te fazer sorrir todos os dias.</p>
+                <p>Feliz Dia dos Namorados! ❤️</p>
+            </div>
+        </div>
+
+        <section class="galeria-secao revelar">
+            <h2 class="titulo-galeria">Nossos Melhores Momentos</h2>
+            <div class="galeria-grid">
+                <img src="momento1.jpg" alt="Momento 1">
+                <img src="momento2.jpg" alt="Momento 2">
+                <img src="momento3.jpg" alt="Momento 3">
+                <img src="momento4.jpg" alt="Momento 4">
+                <img src="momento5.jpg" alt="Momento 5">
+                <img src="momento6.jpg" alt="Momento 6">
+                <img src="momento7.jpg" alt="Momento 7">
+                <img src="momento8.jpg" alt="Momento 8">
+                <img src="momento9.jpg" alt="Momento 9">
+                <video autoplay muted loop playsinline><source src="IMG_0863.MP4"></video>
+                <video autoplay muted loop playsinline><source src="IMG_2278.MP4"></video>
+                <video autoplay muted loop playsinline><source src="IMG_0094.MP4"></video>
+            </div>
+        </section>
+
+        <footer class="revelar">
+            <p>Com todo o meu amor, Daniel ❤️</p>
+        </footer>
+
+    </div><!-- /container -->
+</div><!-- /site-principal -->
+
+
+<script>
+// ═══════════════════════════════════
+// CORAÇÕES FLUTUANTES — INTRO
+// ═══════════════════════════════════
+const emojis = ['❤️','💕','💖','💗','💝','💓','✨','🌸'];
+
+function novoCoracao(containerId) {
+    const c = document.getElementById(containerId);
+    if (!c) return;
+    const el = document.createElement('span');
+    el.className = 'coracao-flutuante';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left            = Math.random() * 100 + 'vw';
+    el.style.fontSize        = (Math.random() * 20 + 10) + 'px';
+    el.style.animationDuration = (Math.random() * 5 + 6) + 's';
+    el.style.animationDelay  = (Math.random() * 2) + 's';
+    c.appendChild(el);
+    setTimeout(() => el.remove(), 12000);
+}
+
+const introInterval = setInterval(() => novoCoracao('heartsContainer'), 500);
+
+
+// ═══════════════════════════════════
+// ABRIR ENVELOPE
+// ═══════════════════════════════════
+let envelopeAberto = false;
+
+function abrirCartinha() {
+    if (envelopeAberto) return;
+    envelopeAberto = true;
+
+    const aba    = document.getElementById('envAba');
+    const carta  = document.getElementById('letter');
+    const dica   = document.getElementById('dicaClique');
+    const btnOk  = document.getElementById('btnEntrar');
+
+    // Fade dica de clique
+    dica.style.opacity   = '0';
+    dica.style.transform = 'translateY(10px)';
+
+    // Abre a aba após pequeno delay
+    setTimeout(() => {
+        aba.classList.add('aberta');
+        // Abaixa o z-index da aba na metade da animação (quando é invisível de lado)
+        setTimeout(() => { aba.style.zIndex = '3'; }, 450);
+    }, 120);
+
+    // Carta sobe
+    setTimeout(() => {
+        carta.classList.add('aberta');
+    }, 750);
+
+    // Botão aparece
+    setTimeout(() => {
+        btnOk.classList.add('visivel');
+    }, 1600);
+}
+
+
+// ═══════════════════════════════════
+// ENTRAR NO SITE
+// ═══════════════════════════════════
+function entrarNoSite(e) {
+    e.stopPropagation();
+
+    clearInterval(introInterval);
+
+    const overlay = document.getElementById('intro-overlay');
+    const site    = document.getElementById('site-principal');
+
+    // Fade out intro
+    overlay.style.transition = 'opacity 1s ease';
+    overlay.style.opacity    = '0';
+
+    setTimeout(() => {
+        overlay.style.display = 'none';
+
+        // Mostra site com fade in
+        site.classList.remove('oculto');
+        site.style.opacity    = '0';
+        site.style.transition = 'opacity 1s ease';
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+            site.style.opacity = '1';
+        }));
+
+        // Inicia scroll reveal e corações de fundo
+        setTimeout(iniciarScrollReveal, 150);
+        iniciarCorracoesFundo();
+    }, 1000);
+}
+
+
+// ═══════════════════════════════════
+// SCROLL REVEAL
+// ═══════════════════════════════════
+function iniciarScrollReveal() {
+    const elementos = document.querySelectorAll('.revelar');
+
+    if (!('IntersectionObserver' in window)) {
+        elementos.forEach(el => el.classList.add('revelado'));
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+                setTimeout(() => entry.target.classList.add('revelado'), i * 120);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    elementos.forEach(el => observer.observe(el));
+}
+
+
+// ═══════════════════════════════════
+// MENSAGEM SURPRESA
+// ═══════════════════════════════════
+function revelarSurpresa() {
+    const msg = document.getElementById('surpresa');
+    const oculto = msg.classList.contains('surpresa-oculta');
+
+    if (oculto) {
+        msg.classList.remove('surpresa-oculta');
+        msg.classList.add('surpresa-visivel');
+    } else {
+        msg.classList.remove('surpresa-visivel');
+        msg.classList.add('surpresa-oculta');
+    }
+}
+
+
+// ═══════════════════════════════════
+// CORAÇÕES DE FUNDO — SITE PRINCIPAL
+// ═══════════════════════════════════
+function iniciarCorracoesFundo() {
+    setInterval(() => {
+        const bg = document.getElementById('coracoesFundo');
+        if (!bg) return;
+        const el = document.createElement('span');
+        el.className = 'coracao-bg';
+        el.textContent = ['❤️','💕','✨','💖','🌸'][Math.floor(Math.random() * 5)];
+        el.style.left             = Math.random() * 100 + 'vw';
+        el.style.fontSize         = (Math.random() * 14 + 8) + 'px';
+        el.style.opacity          = (Math.random() * 0.3 + 0.05).toString();
+        el.style.animationDuration = (Math.random() * 8 + 10) + 's';
+        bg.appendChild(el);
+        setTimeout(() => el.remove(), 18000);
+    }, 1400);
+}
+</script>
+
+</body>
+</html>

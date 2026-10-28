@@ -1,0 +1,629 @@
+/* ═══════════════════════════════════════════
+   RESET & BASE
+═══════════════════════════════════════════ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    overflow-x: hidden;
+    background: #fff5f5;
+}
+
+
+/* ═══════════════════════════════════════════
+   INTRO OVERLAY
+═══════════════════════════════════════════ */
+.intro-overlay {
+    position: fixed;
+    inset: 0;
+    /* Gradiente animado */
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fcb8d4, #ffd6e7, #ff9a9e);
+    background-size: 400% 400%;
+    animation: gradienteAnimar 9s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+@keyframes gradienteAnimar {
+    0%   { background-position: 0%   50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0%   50%; }
+}
+
+/* Corações flutuantes (intro) */
+.hearts-container {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.coracao-flutuante {
+    position: absolute;
+    bottom: -60px;
+    animation: subirCoracao linear forwards;
+    pointer-events: none;
+}
+
+@keyframes subirCoracao {
+    0%   { transform: translateY(0)      rotate(0deg)   scale(1);   opacity: 1;   }
+    40%  { transform: translateY(-40vh)  rotate(160deg) scale(1.1); opacity: 0.9; }
+    100% { transform: translateY(-115vh) rotate(360deg) scale(0.7); opacity: 0;   }
+}
+
+/* Cena da intro */
+.intro-scene {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;
+    z-index: 1;
+    padding: 20px;
+    width: 100%;
+}
+
+.intro-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(1.4rem, 5vw, 2.2rem);
+    color: white;
+    text-shadow: 0 3px 20px rgba(170, 0, 70, 0.35);
+    text-align: center;
+    animation: tituloEntrar 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes tituloEntrar {
+    from { opacity: 0; transform: translateY(-40px) scale(0.8); }
+    to   { opacity: 1; transform: translateY(0)     scale(1);   }
+}
+
+
+/* ═══════════════════════════════════════════
+   ENVELOPE
+═══════════════════════════════════════════ */
+.envelope-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    cursor: pointer;
+    animation: envelopeEntrar 1.1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+@keyframes envelopeEntrar {
+    from { opacity: 0; transform: translateY(70px) scale(0.65); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Container do envelope — define perspectiva 3D */
+.envelope {
+    width: 320px;
+    height: 220px;
+    position: relative;
+    filter: drop-shadow(0 18px 50px rgba(200, 30, 90, 0.55));
+    transition: filter 0.3s ease;
+}
+
+.envelope-wrap:hover .envelope {
+    filter: drop-shadow(0 24px 65px rgba(200, 30, 90, 0.75));
+}
+
+/* ── Corpo do envelope — retângulo completo ── */
+.env-corpo {
+    position: absolute;
+    inset: 0;                    /* cobre TODO o envelope sem costura */
+    background: linear-gradient(160deg, #fff0f5 0%, #ffe4ef 55%, #ffd6e7 100%);
+    border-radius: 18px;
+    border: 2px solid rgba(255, 110, 165, 0.45);
+    z-index: 5;
+    overflow: visible;
+}
+
+/* Dobras laterais — triângulos decorativos (altura total do envelope) */
+.env-dobra-esq {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-bottom: 220px solid rgba(255, 100, 150, 0.1);
+    border-right: 160px solid transparent;
+    border-radius: 0 0 0 18px;
+    pointer-events: none;
+}
+
+.env-dobra-dir {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-bottom: 220px solid rgba(255, 100, 150, 0.1);
+    border-left: 160px solid transparent;
+    border-radius: 0 0 18px 0;
+    pointer-events: none;
+}
+
+/* Lacre / selo */
+.env-lacre {
+    position: absolute;
+    bottom: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2rem;
+    z-index: 6;
+    pointer-events: none;
+    animation: lacresPulso 2s ease-in-out infinite;
+}
+
+@keyframes lacresPulso {
+    0%, 100% { transform: translateX(-50%) scale(1);    }
+    50%       { transform: translateX(-50%) scale(1.18); }
+}
+
+/* ── Aba superior (abre em 3D) ── */
+.env-aba {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 320px;
+    height: 108px;
+    background: linear-gradient(175deg, #ffb3c6, #ff85a1);
+    /* Triângulo apontando para baixo */
+    clip-path: polygon(0 0, 50% 100%, 100% 0);
+    transform-origin: center top;
+    transform: perspective(700px) rotateX(0deg);
+    transition: transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    filter: drop-shadow(0 4px 8px rgba(200, 40, 100, 0.25));
+}
+
+/* Estado aberto */
+.env-aba.aberta {
+    transform: perspective(700px) rotateX(-180deg);
+}
+
+/* ── Carta dentro do envelope ── */
+.letter {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    width: 92%;
+    height: 240px;
+    /* Linhas de caderno via gradiente — sempre atrás do texto */
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            transparent          0px,
+            transparent          36px,
+            rgba(214,51,132,0.1) 36px,
+            rgba(214,51,132,0.1) 37px
+        ),
+        white;
+    border-radius: 12px;
+    z-index: 8;
+    opacity: 0;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 120, 170, 0.25);
+    pointer-events: none;
+    transition:
+        transform 0.95s cubic-bezier(0.34, 1.56, 0.64, 1),
+        opacity   0.45s ease;
+}
+
+/* Conteúdo da carta — ocupa todo o espaço e centraliza */
+.letter-content {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;           /* espaçamento uniforme entre itens */
+    padding: 22px 28px;  /* espaço interno generoso */
+    text-align: center;
+    z-index: 1;
+}
+
+/* Estado aberto — carta sobe (bottom fica rente ao topo do envelope) */
+.letter.aberta {
+    transform: translateX(-50%) translateY(-210px);
+    opacity: 1;
+    pointer-events: all;
+}
+
+.letter-saudacao {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.75rem;  /* ~28px — hierarquia clara */
+    color: #d63384;
+    line-height: 1.3;
+}
+
+.letter-texto {
+    font-size: 1rem;     /* 16px — mínimo de legibilidade (WCAG) */
+    color: #666;
+    line-height: 1.7;
+    max-width: 100%;
+}
+
+/* Botão "Ver o site" dentro da carta */
+.btn-entrar {
+    background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 100%);
+    color: white;
+    border: none;
+    padding: 12px 32px;  /* área de toque mínima de 44px (altura) */
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;     /* 16px — legível e confortável */
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.4px;
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+        opacity   0.5s ease,
+        transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
+        background 0.3s ease,
+        box-shadow 0.3s ease;
+    box-shadow: 0 6px 22px rgba(255, 77, 109, 0.45);
+}
+
+.btn-entrar.visivel {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-entrar:hover {
+    background: linear-gradient(135deg, #e6304f 0%, #a4133c 100%);
+    box-shadow: 0 9px 28px rgba(255, 77, 109, 0.65);
+    transform: scale(1.07) translateY(-2px);
+}
+
+.btn-entrar:active {
+    transform: scale(0.96);
+}
+
+/* Dica de clique */
+.dica-clique {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.55rem;
+    color: white;
+    text-shadow: 0 2px 12px rgba(150, 0, 60, 0.3);
+    animation: dicaPular 2s ease-in-out infinite;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+@keyframes dicaPular {
+    0%, 100% { transform: translateY(0)   scale(1);    }
+    50%       { transform: translateY(-9px) scale(1.05); }
+}
+
+
+/* ═══════════════════════════════════════════
+   SITE PRINCIPAL
+═══════════════════════════════════════════ */
+.site-principal {
+    min-height: 100vh;
+    background: #fff5f5;
+    position: relative;
+}
+
+.site-principal.oculto { display: none; }
+
+/* Corações sutis no fundo */
+.coracoes-fundo {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.coracao-bg {
+    position: absolute;
+    bottom: -60px;
+    animation: subirFundo linear forwards;
+    pointer-events: none;
+}
+
+@keyframes subirFundo {
+    0%   { transform: translateY(0)      rotate(-12deg); }
+    50%  { transform: translateY(-55vh)  rotate(12deg);  }
+    100% { transform: translateY(-115vh) rotate(-12deg); opacity: 0; }
+}
+
+
+/* ═══════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════ */
+.revelar {
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+        opacity   0.9s ease,
+        transform 0.9s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.revelar.revelado {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* ═══════════════════════════════════════════
+   CONTAINER
+═══════════════════════════════════════════ */
+.container {
+    max-width: 1000px;
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 12px 45px rgba(255, 182, 193, 0.5);
+    text-align: center;
+    margin: 20px auto;
+    position: relative;
+    z-index: 1;
+}
+
+
+/* ═══════════════════════════════════════════
+   TIPOGRAFIA
+═══════════════════════════════════════════ */
+h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2.4rem, 6vw, 3.5rem);
+    margin-bottom: 10px;
+    /* Texto com gradiente brilhante animado */
+    background: linear-gradient(90deg, #c9184a, #ff4d6d, #ff85a1, #ff4d6d, #c9184a);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: brilhoTexto 5s linear infinite;
+}
+
+.titulo-galeria {
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    margin-top: 60px;
+    margin-bottom: 30px;
+    background: linear-gradient(90deg, #c9184a, #ff4d6d, #ff85a1, #ff4d6d, #c9184a);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: brilhoTexto 5s linear infinite;
+}
+
+@keyframes brilhoTexto {
+    to { background-position: 300% center; }
+}
+
+/* Coração pulsante no header */
+.coracao-icone {
+    font-size: 2.8rem;
+    display: inline-block;
+    margin: 12px 0 4px;
+    animation: batimento 1.6s ease-in-out infinite;
+}
+
+@keyframes batimento {
+    0%,  100% { transform: scale(1);   }
+    14%        { transform: scale(1.3); }
+    28%        { transform: scale(1);   }
+    42%        { transform: scale(1.2); }
+    70%        { transform: scale(1);   }
+}
+
+
+/* ═══════════════════════════════════════════
+   CARDS DE FOTOS
+═══════════════════════════════════════════ */
+.fotos {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    flex-wrap: wrap;
+    margin: 32px 0;
+}
+
+.foto-card {
+    background: white;
+    padding: 10px;
+    border: 1px solid #f0d0e0;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
+    width: 280px;
+    border-radius: 10px;
+    transition:
+        transform  0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.45s ease;
+}
+
+.foto-card:hover {
+    transform: translateY(-14px) rotate(1.8deg);
+    box-shadow: 0 22px 55px rgba(255, 77, 109, 0.38);
+}
+
+.foto-card img,
+.foto-card video {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+}
+
+.foto-card p {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #d63384;
+    margin-top: 12px;
+    padding-bottom: 5px;
+}
+
+
+/* ═══════════════════════════════════════════
+   TEXTO ROMÂNTICO
+═══════════════════════════════════════════ */
+.texto-romantico {
+    margin: 44px 0;
+}
+
+.texto-romantico h2 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.2rem;
+    color: #d63384;
+    margin-bottom: 20px;
+}
+
+.texto-romantico p {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto 14px;
+}
+
+
+/* ═══════════════════════════════════════════
+   BOTÃO E SURPRESA
+═══════════════════════════════════════════ */
+.botao-area {
+    margin: 40px 0;
+}
+
+.botao-area button {
+    background: linear-gradient(135deg, #ff4d6d 0%, #c9184a 100%);
+    color: white;
+    border: none;
+    padding: 16px 42px;
+    border-radius: 50px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    transition:
+        transform  0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.35s ease,
+        background 0.3s ease;
+    box-shadow: 0 8px 28px rgba(255, 77, 109, 0.48);
+}
+
+.botao-area button:hover {
+    background: linear-gradient(135deg, #e6304f 0%, #a4133c 100%);
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 15px 38px rgba(255, 77, 109, 0.65);
+}
+
+.botao-area button:active {
+    transform: scale(0.96);
+}
+
+/* Mensagem surpresa */
+.surpresa-oculta { display: none; }
+
+.surpresa-visivel {
+    display: block;
+    margin-top: 32px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.75rem;
+    color: #d63384;
+    line-height: 1.6;
+    animation: surpresaPop 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes surpresaPop {
+    from { opacity: 0; transform: scale(0.4) rotate(-8deg); }
+    to   { opacity: 1; transform: scale(1)   rotate(0deg);  }
+}
+
+
+/* ═══════════════════════════════════════════
+   GALERIA
+═══════════════════════════════════════════ */
+.galeria-secao { margin-top: 20px; }
+
+.galeria-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.galeria-grid img,
+.galeria-grid video {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    box-shadow: 0 5px 16px rgba(0, 0, 0, 0.1);
+    transition:
+        transform  0.42s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.42s ease;
+}
+
+.galeria-grid img:hover,
+.galeria-grid video:hover {
+    transform: scale(1.09);
+    box-shadow: 0 14px 38px rgba(255, 77, 109, 0.48);
+}
+
+
+/* ═══════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════ */
+footer {
+    margin-top: 70px;
+    padding-top: 28px;
+    border-top: 1px solid rgba(255, 182, 193, 0.4);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    color: #d63384;
+}
+
+
+/* ═══════════════════════════════════════════
+   RESPONSIVO — MOBILE
+═══════════════════════════════════════════ */
+@media (max-width: 420px) {
+    .envelope { width: 275px; height: 195px; }
+
+    /* env-corpo agora usa inset:0 — sem ajuste de tamanho necessário */
+
+    .env-aba {
+        width: 275px;
+        height: 92px;
+        clip-path: polygon(0 0, 50% 100%, 100% 0);
+    }
+
+    .letter { height: 200px; width: 94%; }
+    .letter.aberta { transform: translateX(-50%) translateY(-185px); }
+    .letter-saudacao { font-size: 1.5rem; }
+    .letter-texto    { font-size: 0.95rem; }
+
+    .env-dobra-esq { border-bottom-width: 195px; border-right-width: 137px; }
+    .env-dobra-dir { border-bottom-width: 195px; border-left-width:  137px; }
+
+    .env-lacre { bottom: 44px; font-size: 1.7rem; }
+
+    .container { padding: 24px 16px; }
+
+    .foto-card { width: 100%; max-width: 320px; }
+}
+
+@media (max-width: 600px) {
+    .intro-scene { gap: 24px; }
+}
